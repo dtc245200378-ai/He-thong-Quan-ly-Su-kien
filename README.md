@@ -48,6 +48,7 @@ Event_Management_System/
 - **Git**
 
 ### 2. Khởi chạy Hệ thống
+
 ```bash
 # Clone repository về máy
 git clone [https://github.com/dtc245200378-ai/He-thong-Quan-ly-Su-kien.git](https://github.com/dtc245200378-ai/He-thong-Quan-ly-Su-kien.git)
@@ -55,8 +56,7 @@ cd He-thong-Quan-ly-Su-kien
 
 # Tái tạo image và khởi chạy toàn bộ 8 containers dưới dạng background
 sudo docker compose up -d --build
-3. Kiểm tra Trạng thái Vận hành
-Bash
+
 # Kiểm tra trạng thái 8 containers
 sudo docker compose ps
 
