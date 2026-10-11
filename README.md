@@ -37,6 +37,7 @@ Event_Management_System/
 │   └── promtail-config.yaml   # Cấu hình gom log từ Docker containers
 ├── docker-compose.yml         # File định nghĩa & orchestrate toàn bộ 8 containers
 └── README.md                  # Tài liệu hướng dẫn đồ án
+```
 ---
 
 ## 🚀 Hướng dẫn Triển khai & Khởi chạy
