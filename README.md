@@ -1,4 +1,4 @@
-# 🎪 Event Management System (Hệ thống Quản lý Sự kiện)
+# 🎪 Hệ thống Quản lý Sự kiện
 > Hệ thống quản lý sự kiện Full-Stack đóng gói tự động dưới dạng **8 Containers Docker** tích hợp hạ tầng giám sát tập trung **Observability Stack** (Prometheus, Grafana, Loki, Promtail).
 
 ---
