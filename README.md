@@ -42,41 +42,46 @@ Event_Management_System/
 ## 🚀 Hướng dẫn Triển khai & Khởi chạy
 
 ### 1. Yêu cầu Tiền đề (Prerequisites)
-* **OS:** Ubuntu 20.04/22.04 LTS (hoặc các hệ điều hành Linux tương đương)
-* **Engine:** Docker `v20.10+` và Docker Compose `v2.0+`
-* **Git**
+- **OS:** Ubuntu 20.04/22.04 LTS (hoặc các hệ điều hành Linux tương đương)
+- **Engine:** Docker `v20.10+` và Docker Compose `v2.0+`
+- **Git**
 
 ### 2. Khởi chạy Hệ thống
-bash
+```bash
 # Clone repository về máy
-git clone https://github.com/dtc245200378-ai/He-thong-Quan-ly-Su-kien.git
+git clone [https://github.com/dtc245200378-ai/He-thong-Quan-ly-Su-kien.git](https://github.com/dtc245200378-ai/He-thong-Quan-ly-Su-kien.git)
 cd He-thong-Quan-ly-Su-kien
 
 # Tái tạo image và khởi chạy toàn bộ 8 containers dưới dạng background
 sudo docker compose up -d --build
-
-### 3. Kiểm tra Trạng thái Vận hành
-bash
+3. Kiểm tra Trạng thái Vận hành
+Bash
 # Kiểm tra trạng thái 8 containers
 sudo docker compose ps
 
 # Kiểm tra phản hồi kết nối từ Nginx
 curl -I http://localhost/
 # Kết quả kỳ vọng: HTTP/1.1 200 OK
+🔗 Truy cập các Dịch vụ (Endpoints)
+(Lưu ý: Thay localhost bằng địa chỉ IP máy chủ ảo Ubuntu của bạn, ví dụ: 192.168.240.129)
 
----
+🌐 Website Quản lý Sự kiện: http://localhost/ (qua Nginx Proxy)
 
-## 🔗 Truy cập các Dịch vụ (Endpoints)
+🗄️ Quản trị Database (PgAdmin): http://localhost:5050 (User: admin@admin.com | Pass: admin)
 
-* 🌐 **Website Quản lý Sự kiện:** `http://localhost/` (qua Nginx Proxy)
-* 🗄️ **Quản trị Database (PgAdmin):** `http://localhost:5050` *(User: `admin@admin.com` | Pass: `admin`)*
-* 📊 **Grafana Dashboard:** `http://localhost:3000` *(User: `admin` | Pass: `admin`)*
-* 📈 **Prometheus Server:** `http://localhost:9090`
-* 🪵 **Loki Log Engine:** `http://localhost:3100`
+Thông số kết nối Database: Host: postgres, Port: 5432, DB: event_db, User: user, Pass: password
 
----
+📊 Grafana Dashboard: http://localhost:3000 (User: admin | Pass: admin)
 
-## 🛡️ Điểm nổi bật về Hạ tầng & Bảo mật
-1. **Data Persistence:** Dữ liệu PostgreSQL không bị mất khi hạ container nhờ Docker Volume `pgdata`.
-2. **Network Isolation:** WebApp không mở cổng trực tiếp ra ngoài Internet mà qua lớp Reverse Proxy Nginx.
-3. **Real-time Observability:** Mọi log lỗi và thông số RAM/CPU/Request Rate đều được giám sát thời gian thực trên Grafana.
+📈 Prometheus Server: http://localhost:9090
+
+🪵 Loki Log Engine: http://localhost:3100
+
+🛡️ Điểm nổi bật về Hạ tầng & Bảo mật (Hardening)
+Data Persistence: Dữ liệu PostgreSQL không bị mất khi hạ container nhờ Docker Volume pgdata.
+
+Network Isolation: WebApp không mở cổng trực tiếp ra ngoài Internet mà chỉ giao tiếp nội bộ qua lớp Reverse Proxy Nginx.
+
+Security Headers: Cấu hình Nginx bổ sung các HTTP headers chống tấn công web phổ biến.
+
+Real-time Observability: Mọi log lỗi và thông số RAM/CPU/Request Rate đều được giám sát thời gian thực trên Grafana.
