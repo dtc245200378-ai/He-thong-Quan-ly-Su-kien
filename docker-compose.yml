@@ -1,0 +1,96 @@
+version: '3.8'
+
+networks:
+  frontend_net:
+  backend_net: # DB chỉ giao tiếp trong mạng này để bảo mật
+
+services:
+  # 1. Cơ sở dữ liệu PostgreSQL
+  db:
+    image: postgres:15-alpine
+    env_file: .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend_net
+    restart: always
+
+  # 2. Công cụ quản lý DB pgAdmin
+  pgadmin:
+    image: dpage/pgadmin4
+    env_file: .env
+    ports:
+      - "5050:80"
+    networks:
+      - backend_net
+      - frontend_net
+
+  # 3. Ứng dụng Web Quản lý Sự kiện
+  webapp:
+    build: ./app
+    container_name: event_webapp
+    expose:
+      - "8000" # Chỉ expose nội bộ, không dùng ports
+    env_file: .env
+    networks:
+      - backend_net
+      - frontend_net
+    depends_on:
+      - db
+
+  # 4. Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - frontend_net
+    depends_on:
+      - webapp
+
+  # 5. Prometheus (Giám sát metrics)
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - frontend_net
+
+  # 6. Grafana (Hiển thị Dashboard)
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend_net
+    depends_on:
+      - prometheus
+
+  # 7. Loki (Log tập trung)
+  loki:
+    image: grafana/loki:2.9.0
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki/loki-config.yaml:/mnt/config/loki-config.yaml:ro
+    command: -config.file=/mnt/config/loki-config.yaml
+    networks:
+      - frontend_net
+
+  # 8. Promtail (Thu thập log)
+  promtail:
+    image: grafana/promtail:2.9.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Đọc log container
+      - ./promtail/promtail-config.yaml:/mnt/config/promtail-config.yaml:ro
+    command: -config.file=/mnt/config/promtail-config.yaml
+    networks:
+      - frontend_net
+    depends_on:
+      - loki
+
+volumes:
+  pgdata:

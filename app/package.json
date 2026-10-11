@@ -1,0 +1,9 @@
+{
+  "name": "event-webapp",
+  "version": "1.0.0",
+  "description": "He thong Quan ly Su kien",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
