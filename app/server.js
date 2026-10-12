@@ -17,7 +17,8 @@ const pool = new Pool({
     port: 5432,
 });
 
-const initDB = async () => {
+// Hàm tự động tạo bảng nếu chưa tồn tại
+const ensureTableExists = async () => {
     try {
         await pool.query(`
             CREATE TABLE IF NOT EXISTS events (
@@ -28,25 +29,26 @@ const initDB = async () => {
                 tickets_sold INT DEFAULT 0
             );
         `);
-        console.log("Database initialized successfully!");
     } catch (err) {
-        console.error("Error initializing database:", err);
+        console.error("Error creating table:", err);
     }
 };
-initDB();
 
 app.get('/api/events', async (req, res) => {
     try {
+        await ensureTableExists();
         const result = await pool.query('SELECT * FROM events ORDER BY date ASC');
         res.json(result.rows);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("DB Error:", err.message);
+        res.json([]); // Trả về mảng rỗng để client không bị lỗi forEach
     }
 });
 
 app.post('/api/events', async (req, res) => {
     const { name, date, total_tickets } = req.body;
     try {
+        await ensureTableExists();
         const result = await pool.query(
             'INSERT INTO events (name, date, total_tickets) VALUES ($1, $2, $3) RETURNING *',
             [name, date, total_tickets]

@@ -3,77 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Quản lý Sự kiện (Demo)</title>
+    <title>Quản Lý Sự Kiện Chuyên Nghiệp</title>
+    <!-- Bootstrap 5 & Google Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 0; border-radius: 0 0 15px 15px; margin-bottom: 30px; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .btn-custom { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; }
+        .btn-custom:hover { opacity: 0.9; color: white; }
+        table th { background-color: #2d3748 !important; color: white !important; }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h2 class="text-center text-primary mb-4">Hệ Thống Tổ Chức & Quản Lý Sự Kiện</h2>
-        
-        <div class="card mb-4">
-            <div class="card-header bg-success text-white">Tạo Sự Kiện Mới</div>
+<body>
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1><i class="fa-solid fa-calendar-days me-2"></i> Hệ Thống Quản Lý Sự Kiện</h1>
+            <p class="lead">Nền tảng tổ chức sự kiện, đăng ký và quản lý vé thông minh</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Form Tạo Sự Kiện -->
+        <div class="card mb-4 p-3">
             <div class="card-body">
+                <h4 class="card-title text-success mb-3"><i class="fa-solid fa-circle-plus me-2"></i>Tạo Sự Kiện Mới</h4>
                 <form id="addEventForm">
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label>Tên Sự Kiện</label>
-                            <input type="text" id="eventName" class="form-control" required>
+                            <label class="form-label fw-bold">Tên Sự Kiện</label>
+                            <input type="text" id="eventName" class="form-control" placeholder="Nhập tên sự kiện..." required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label>Ngày Tổ Chức</label>
+                            <label class="form-label fw-bold">Ngày Tổ Chức</label>
                             <input type="date" id="eventDate" class="form-control" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label>Tổng Số Vé</label>
-                            <input type="number" id="eventTickets" class="form-control" required>
+                            <label class="form-label fw-bold">Tổng Số Vé</label>
+                            <input type="number" id="eventTickets" class="form-control" placeholder="Ví dụ: 100" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Thêm Sự Kiện</button>
+                    <button type="submit" class="btn btn-custom px-4 py-2"><i class="fa-solid fa-plus me-1"></i> Thêm Sự Kiện</button>
                 </form>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header bg-dark text-white">Danh Sách Sự Kiện Đang Mở Đăng Ký</div>
+        <!-- Danh Sách Sự Kiện -->
+        <div class="card p-3 mb-5">
             <div class="card-body">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên Sự Kiện</th>
-                            <th>Ngày Tổ Chức</th>
-                            <th>Vé Đã Bán / Tổng Vé</th>
-                            <th>Hành Động</th>
-                        </tr>
-                    </thead>
-                    <tbody id="eventList"></tbody>
-                </table>
+                <h4 class="card-title text-dark mb-3"><i class="fa-solid fa-list-check me-2"></i>Danh Sách Sự Kiện Đang Mở Đăng Ký</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên Sự Kiện</th>
+                                <th>Ngày Tổ Chức</th>
+                                <th>Trạng Thái Vé</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eventList">
+                            <tr><td colspan="5" class="text-center py-4 text-muted">Đang tải dữ liệu...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         async function loadEvents() {
-            const res = await fetch('/api/events');
-            const events = await res.json();
-            const tbody = document.getElementById('eventList');
-            tbody.innerHTML = '';
-            events.forEach(ev => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${ev.id}</td>
-                    <td>${ev.name}</td>
-                    <td>${new Date(ev.date).toLocaleDateString('vi-VN')}</td>
-                    <td><span class="badge bg-info text-dark">${ev.tickets_sold} / ${ev.total_tickets}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-danger" onclick="bookTicket(${ev.id})" 
-                            ${ev.tickets_sold >= ev.total_tickets ? 'disabled' : ''}>
-                            Đăng Ký Vé
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+            try {
+                const res = await fetch('/api/events');
+                const events = await res.json();
+                const tbody = document.getElementById('eventList');
+                tbody.innerHTML = '';
+                if(!Array.isArray(events) || events.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">Chưa có sự kiện nào. Hãy thêm mới bên trên!</td></tr>`;
+                    return;
+                }
+                events.forEach(ev => {
+                    const tr = document.createElement('tr');
+                    const formattedDate = new Date(ev.date).toLocaleDateString('vi-VN');
+                    const isSoldOut = ev.tickets_sold >= ev.total_tickets;
+                    tr.innerHTML = `
+                        <td><b>#${ev.id}</b></td>
+                        <td class="fw-bold text-primary">${ev.name}</td>
+                        <td><i class="fa-regular fa-calendar me-1"></i>${formattedDate}</td>
+                        <td><span class="badge ${isSoldOut ? 'bg-danger' : 'bg-success'} px-3 py-2">${ev.tickets_sold} / ${ev.total_tickets} vé</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger px-3" onclick="bookTicket(${ev.id})" ${isSoldOut ? 'disabled' : ''}>
+                                <i class="fa-solid fa-ticket me-1"></i> ${isSoldOut ? 'Hết vé' : 'Đăng Ký'}
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Lỗi tải sự kiện:", err);
+            }
         }
 
         document.getElementById('addEventForm').addEventListener('submit', async (e) => {
@@ -83,23 +113,39 @@
                 date: document.getElementById('eventDate').value,
                 total_tickets: parseInt(document.getElementById('eventTickets').value)
             };
-            await fetch('/api/events', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            e.target.reset();
-            loadEvents();
+            
+            try {
+                const res = await fetch('/api/events', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if(res.ok) {
+                    alert("Thêm sự kiện thành công!");
+                    e.target.reset();
+                    loadEvents();
+                } else {
+                    const errData = await res.json();
+                    alert("Lỗi: " + (errData.error || "Không thể thêm sự kiện"));
+                }
+            } catch (err) {
+                alert("Lỗi kết nối đến server!");
+            }
         });
 
         async function bookTicket(id) {
-            const res = await fetch(`/api/events/${id}/book`, { method: 'POST' });
-            const result = await res.json();
-            if(res.ok) {
-                alert("Đăng ký thành công!");
-                loadEvents();
-            } else {
-                alert(result.error);
+            try {
+                const res = await fetch(`/api/events/${id}/book`, { method: 'POST' });
+                const result = await res.json();
+                if(res.ok) {
+                    alert("Đăng ký vé thành công!");
+                    loadEvents();
+                } else {
+                    alert(result.error || "Không thể đăng ký vé");
+                }
+            } catch (err) {
+                alert("Lỗi kết nối khi đặt vé!");
             }
         }
 
