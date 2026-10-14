@@ -3,153 +3,449 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Sự Kiện Chuyên Nghiệp</title>
-    <!-- Bootstrap 5 & Google Fonts -->
+    <title>Hệ thống Quản lý & Check-in Sự Kiện Chuyên Nghiệp</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 0; border-radius: 0 0 15px 15px; margin-bottom: 30px; }
-        .card { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .btn-custom { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; }
-        .btn-custom:hover { opacity: 0.9; color: white; }
-        table th { background-color: #2d3748 !important; color: white !important; }
+        :root { --primary-color: #4f46e5; --secondary-color: #818cf8; }
+        body { background-color: #f3f4f6; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .navbar { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .card-stats { border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card-stats:hover { transform: translateY(-4px); }
+        .table-custom th { background-color: #1e293b !important; color: white; font-weight: 600; }
+        .badge-status { padding: 6px 12px; border-radius: 50rem; font-weight: 500; font-size: 0.85rem; }
+        .nav-pills .nav-link.active { background-color: var(--primary-color); font-weight: 600; }
+        .nav-pills .nav-link { color: #4b5563; font-weight: 500; }
     </style>
 </head>
 <body>
-    <div class="hero-section text-center">
-        <div class="container">
-            <h1><i class="fa-solid fa-calendar-days me-2"></i> Hệ Thống Quản Lý Sự Kiện</h1>
-            <p class="lead">Nền tảng tổ chức sự kiện, đăng ký và quản lý vé thông minh</p>
+    <!-- Navbar Đã Chỉnh Sửa: To hơn, Tiếng Việt và Căn giữa -->
+    <nav class="navbar navbar-dark py-3 mb-4">
+        <div class="container-fluid d-flex justify-content-center">
+            <a class="navbar-brand fw-bold fs-2 m-0 text-uppercase tracking-wide" href="#">
+                <i class="fa-solid fa-calendar-days me-2"></i> Hệ Thống Quản Lý Sự Kiện
+            </a>
         </div>
-    </div>
+    </nav>
 
-    <div class="container">
-        <!-- Form Tạo Sự Kiện -->
-        <div class="card mb-4 p-3">
-            <div class="card-body">
-                <h4 class="card-title text-success mb-3"><i class="fa-solid fa-circle-plus me-2"></i>Tạo Sự Kiện Mới</h4>
-                <form id="addEventForm">
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Tên Sự Kiện</label>
-                            <input type="text" id="eventName" class="form-control" placeholder="Nhập tên sự kiện..." required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Ngày Tổ Chức</label>
-                            <input type="date" id="eventDate" class="form-control" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold">Tổng Số Vé</label>
-                            <input type="number" id="eventTickets" class="form-control" placeholder="Ví dụ: 100" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-custom px-4 py-2"><i class="fa-solid fa-plus me-1"></i> Thêm Sự Kiện</button>
-                </form>
+    <div class="container pb-5">
+        <!-- Dashboard Thống kê -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card card-stats p-3 bg-white border-start border-4 border-primary">
+                    <div class="text-muted small fw-semibold">TỔNG SỰ KIỆN</div>
+                    <h3 class="fw-bold text-dark mb-0 mt-1" id="stat-total">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-stats p-3 bg-white border-start border-4 border-success">
+                    <div class="text-muted small fw-semibold">VÉ ĐÃ PHÁT HÀNH</div>
+                    <h3 class="fw-bold text-success mb-0 mt-1" id="stat-tickets">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-stats p-3 bg-white border-start border-4 border-warning">
+                    <div class="text-muted small fw-semibold">TỔNG LƯỢT ĐĂNG KÝ</div>
+                    <h3 class="fw-bold text-warning mb-0 mt-1" id="stat-registrations">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card card-stats p-3 bg-white border-start border-4 border-info">
+                    <div class="text-muted small fw-semibold">TỶ LỆ LẤP ĐẦY</div>
+                    <h3 class="fw-bold text-info mb-0 mt-1" id="stat-rate">0%</h3>
+                </div>
             </div>
         </div>
 
-        <!-- Danh Sách Sự Kiện -->
-        <div class="card p-3 mb-5">
-            <div class="card-body">
-                <h4 class="card-title text-dark mb-3"><i class="fa-solid fa-list-check me-2"></i>Danh Sách Sự Kiện Đang Mở Đăng Ký</h4>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Tên Sự Kiện</th>
-                                <th>Ngày Tổ Chức</th>
-                                <th>Trạng Thái Vé</th>
-                                <th>Thao Tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="eventList">
-                            <tr><td colspan="5" class="text-center py-4 text-muted">Đang tải dữ liệu...</td></tr>
-                        </tbody>
-                    </table>
+        <!-- Menu Tab -->
+        <ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm d-inline-flex" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active rounded-pill px-4" id="pills-events-tab" data-bs-toggle="pill" data-bs-target="#pills-events" type="button"><i class="fa-solid fa-list-check me-2"></i> Quản Lý Sự Kiện</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-pill px-4" id="pills-checkin-tab" data-bs-toggle="pill" data-bs-target="#pills-checkin" type="button"><i class="fa-solid fa-qrcode me-2"></i> Trạm Check-in Soát Vé</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+            <!-- TAB 1: QUẢN LÝ SỰ KIỆN -->
+            <div class="tab-pane fade show active" id="pills-events" role="tabpanel">
+                <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-search text-muted"></i></span>
+                                <input type="text" id="searchInput" class="form-control border-start-0 bg-light" placeholder="Tìm kiếm tên sự kiện..." oninput="filterEvents()">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="statusFilter" class="form-select bg-light" onchange="filterEvents()">
+                                <option value="all">🔍 Tất cả trạng thái</option>
+                                <option value="upcoming">⏳ Sắp diễn ra</option>
+                                <option value="open">🟢 Đang diễn ra</option>
+                                <option value="soldout">🔴 Hết vé</option>
+                                <option value="ended">🏁 Đã kết thúc</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button class="btn btn-primary w-100 fw-semibold rounded-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#createEventModal">
+                                <i class="fa-solid fa-plus me-1"></i> Tạo Sự Kiện
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-table-list me-2 text-primary"></i> Danh Sách Sự Kiện Hệ Thống</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 table-custom">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">ID</th>
+                                    <th>Tên Sự Kiện</th>
+                                    <th>Ngày Tổ Chức</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Vé (Đã bán / Tổng)</th>
+                                    <th class="text-center pe-4">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="eventTableBody" class="bg-white">
+                                <!-- Render JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: TRẠM CHECK-IN -->
+            <div class="tab-pane fade" id="pills-checkin" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card border-0 shadow-sm p-4 rounded-4 text-center">
+                            <div class="mb-3">
+                                <i class="fa-solid fa-qrcode text-primary display-3"></i>
+                            </div>
+                            <h3 class="fw-bold">Màn Hình Soát Vé Tại Cổng</h3>
+                            <p class="text-muted">Nhập mã vé điện tử hoặc dùng máy quét mã QR để check-in khách tham dự.</p>
+                            
+                            <div class="input-group mb-3 mt-3">
+                                <input type="text" id="ticketCodeInput" class="form-control form-control-lg" placeholder="Nhập mã vé (VD: TICKET-9842)...">
+                                <button class="btn btn-primary px-4 fw-bold" onclick="performCheckIn()"><i class="fa-solid fa-check-circle me-1"></i> Xác Nhận Check-in</button>
+                            </div>
+                            <div id="checkinResult" class="mt-3"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal Đăng Ký Vé -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header bg-primary text-white rounded-top-4">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-ticket me-2"></i> Đăng Ký Vé Tham Dự</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4" id="modalBodyContent">
+                    <!-- JS Render -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tạo Sự Kiện Mới -->
+    <div class="modal fade" id="createEventModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header bg-dark text-white rounded-top-4">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-calendar-plus me-2"></i> Tạo Sự Kiện Mới</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="eventForm" onsubmit="createEvent(event)">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tên Sự Kiện</label>
+                            <input type="text" id="newTitle" class="form-control" required placeholder="VD: Workshop AI 2026">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ngày Tổ Chức</label>
+                            <input type="date" id="newDate" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tổng Số Vé Phát Hành</label>
+                            <input type="number" id="newTotal" class="form-control" required placeholder="100">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-3 shadow-sm">Lưu & Xuất Bản Sự Kiện</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sửa Sự Kiện -->
+    <div class="modal fade" id="editEventModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header bg-warning text-dark rounded-top-4">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-pen-to-square me-2"></i> Cập Nhật Sự Kiện</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="editEventForm" onsubmit="submitEdit(event)">
+                        <input type="hidden" id="editId">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tên Sự Kiện</label>
+                            <input type="text" id="editTitle" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ngày Tổ Chức</label>
+                            <input type="date" id="editDate" class="form-control" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-semibold">Tổng Số Vé</label>
+                                <input type="number" id="editTotal" class="form-control" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-semibold text-danger">Số Vé Đã Bán</label>
+                                <input type="number" id="editSold" class="form-control" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 py-2 fw-bold rounded-3 shadow-sm">Lưu Thay Đổi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Bootstrap & Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        async function loadEvents() {
-            try {
-                const res = await fetch('/api/events');
-                const events = await res.json();
-                const tbody = document.getElementById('eventList');
-                tbody.innerHTML = '';
-                if(!Array.isArray(events) || events.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">Chưa có sự kiện nào. Hãy thêm mới bên trên!</td></tr>`;
+        const defaultEvents = [
+            { id: 1, name: "Hội thảo Công nghệ Cloud & DevOps 2026", date: "2026-10-20", total: 150, sold: 14 },
+            { id: 2, name: "Lập Trình Web với React & Next.js 2026", date: "2026-02-25", total: 100, sold: 5 },
+            { id: 3, name: "Tọa Đàm: Xây Dựng Hệ Thống Microservices", date: "2026-11-01", total: 200, sold: 5 },
+            { id: 4, name: "Khóa Học AI & Machine Learning Cho Người Mới", date: "2026-10-12", total: 50, sold: 50 }
+        ];
+
+        let savedData = localStorage.getItem('eventManagementData');
+        let events = savedData ? JSON.parse(savedData) : defaultEvents;
+
+        function saveToStorage() {
+            localStorage.setItem('eventManagementData', JSON.stringify(events));
+            updateDashboard();
+        }
+
+        const currentDate = "2026-10-14";
+
+        function getEventStatus(ev) {
+            if (ev.sold >= ev.total) return { text: "Hết vé", class: "bg-danger text-white", type: "soldout" };
+            if (ev.date < currentDate) return { text: "Đã kết thúc", class: "bg-secondary text-white", type: "ended" };
+            if (ev.date === currentDate) return { text: "Đang diễn ra", class: "bg-success text-white", type: "open" };
+            return { text: "Sắp diễn ra", class: "bg-primary text-white", type: "upcoming" };
+        }
+
+        function updateDashboard() {
+            let totalEvents = events.length;
+            let totalTickets = events.reduce((sum, ev) => sum + ev.total, 0);
+            let totalSold = events.reduce((sum, ev) => sum + ev.sold, 0);
+            let fillRate = totalTickets > 0 ? ((totalSold / totalTickets) * 100).toFixed(2) : 0;
+
+            document.getElementById('stat-total').innerText = totalEvents;
+            document.getElementById('stat-tickets').innerText = totalTickets;
+            document.getElementById('stat-registrations').innerText = totalSold;
+            document.getElementById('stat-rate').innerText = fillRate + "%";
+        }
+
+        function renderTable(dataToRender) {
+            const tbody = document.getElementById('eventTableBody');
+            tbody.innerHTML = '';
+            
+            dataToRender.forEach(ev => {
+                let status = getEventStatus(ev);
+                let disableBtn = (ev.sold >= ev.total || status.type === 'ended') ? 'disabled opacity-50' : '';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="ps-4 fw-bold text-muted">#${ev.id}</td>
+                        <td class="fw-semibold text-dark">${ev.name}</td>
+                        <td><i class="fa-regular fa-calendar me-1 text-muted"></i> ${ev.date}</td>
+                        <td><span class="badge badge-status ${status.class}">${status.text}</span></td>
+                        <td><span class="fw-bold text-primary">${ev.sold}</span> / ${ev.total} vé</td>
+                        <td class="text-center pe-4">
+                            <button class="btn btn-sm btn-outline-primary me-1 rounded-2 ${disableBtn}" onclick="openRegisterModal('${ev.name}')" title="Đăng ký"><i class="fa-solid fa-ticket"></i> Đăng ký</button>
+                            <button class="btn btn-sm btn-outline-warning me-1 rounded-2" onclick="editEvent(${ev.id})" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-sm btn-outline-danger rounded-2" onclick="deleteEvent(${ev.id})" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function filterEvents() {
+            let keyword = document.getElementById('searchInput').value.toLowerCase();
+            let filterVal = document.getElementById('statusFilter').value;
+
+            let filtered = events.filter(ev => {
+                let matchName = ev.name.toLowerCase().includes(keyword);
+                let status = getEventStatus(ev);
+                let matchStatus = (filterVal === 'all' || status.type === filterVal);
+                return matchName && matchStatus;
+            });
+
+            renderTable(filtered);
+        }
+
+        function openRegisterModal(eventName) {
+            document.getElementById('modalBodyContent').innerHTML = `
+                <form id="registerForm" onsubmit="submitRegistration(event, '${eventName}')">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Sự kiện đã chọn</label>
+                        <input type="text" class="form-control bg-light" value="${eventName}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Họ và Tên</label>
+                        <input type="text" class="form-control" id="regName" required placeholder="Nguyễn Văn A">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email nhận vé QR</label>
+                        <input type="email" class="form-control" id="regEmail" required placeholder="name@example.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Số điện thoại</label>
+                        <input type="text" class="form-control" id="regPhone" required placeholder="0912345678">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded-3 shadow-sm">Xác Nhận Đăng Ký</button>
+                </form>
+            `;
+            var myModal = new bootstrap.Modal(document.getElementById('registerModal'));
+            myModal.show();
+        }
+
+        function submitRegistration(event, eventName) {
+            event.preventDefault();
+            let name = document.getElementById('regName').value;
+            
+            let ev = events.find(item => item.name === eventName);
+            if(ev) {
+                ev.sold += 1;
+                saveToStorage();
+                filterEvents();
+            }
+
+            document.getElementById('modalBodyContent').innerHTML = `
+                <div class="text-center py-3">
+                    <div class="text-success mb-3"><i class="fa-solid fa-circle-check fa-3x"></i></div>
+                    <h4 class="fw-bold text-success">Đăng Ký Thành Công!</h4>
+                    <p class="text-muted small">Vé điện tử của bạn đã được khởi tạo.</p>
+                    <div class="bg-light p-3 rounded-4 border my-3">
+                        <p class="mb-1 fw-bold text-dark">${eventName}</p>
+                        <p class="mb-1 text-muted small">Người tham dự: <b>${name}</b></p>
+                        <div class="my-2">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TICKET-${Math.floor(Math.random()*90000+10000)}" alt="QR Code" class="img-fluid rounded shadow-sm">
+                        </div>
+                        <span class="badge bg-dark">Mã vé: TICKET-${Math.floor(Math.random()*90000+10000)}</span>
+                    </div>
+                    <button class="btn btn-primary w-100 fw-bold rounded-3" data-bs-dismiss="modal">Hoàn Tất</button>
+                </div>
+            `;
+        }
+
+        function performCheckIn() {
+            let code = document.getElementById('ticketCodeInput').value.trim();
+            let resultDiv = document.getElementById('checkinResult');
+            if(!code) {
+                resultDiv.innerHTML = `<div class="alert alert-warning py-2">Vui lòng nhập mã vé hợp lệ!</div>`;
+                return;
+            }
+            resultDiv.innerHTML = `
+                <div class="alert alert-success py-3 shadow-sm rounded-3">
+                    <i class="fa-solid fa-circle-check fa-lg me-2"></i> <b>Check-in thành công!</b> Vé <code>${code}</code> đã được xác thực lúc ${new Date().toLocaleTimeString()}.
+                </div>
+            `;
+            document.getElementById('ticketCodeInput').value = '';
+        }
+
+        function editEvent(id) {
+            let ev = events.find(item => item.id === id);
+            if(ev) {
+                document.getElementById('editId').value = ev.id;
+                document.getElementById('editTitle').value = ev.name;
+                document.getElementById('editDate').value = ev.date;
+                document.getElementById('editTotal').value = ev.total;
+                document.getElementById('editSold').value = ev.sold;
+                
+                var editModal = new bootstrap.Modal(document.getElementById('editEventModal'));
+                editModal.show();
+            }
+        }
+
+        function submitEdit(event) {
+            event.preventDefault();
+            let id = parseInt(document.getElementById('editId').value);
+            let ev = events.find(item => item.id === id);
+            if(ev) {
+                ev.name = document.getElementById('editTitle').value;
+                ev.date = document.getElementById('editDate').value;
+                ev.total = parseInt(document.getElementById('editTotal').value);
+                
+                let newSold = parseInt(document.getElementById('editSold').value);
+                if (newSold > ev.total) {
+                    alert("Lỗi: Số vé đã bán không được lớn hơn Tổng số vé!");
                     return;
                 }
-                events.forEach(ev => {
-                    const tr = document.createElement('tr');
-                    const formattedDate = new Date(ev.date).toLocaleDateString('vi-VN');
-                    const isSoldOut = ev.tickets_sold >= ev.total_tickets;
-                    tr.innerHTML = `
-                        <td><b>#${ev.id}</b></td>
-                        <td class="fw-bold text-primary">${ev.name}</td>
-                        <td><i class="fa-regular fa-calendar me-1"></i>${formattedDate}</td>
-                        <td><span class="badge ${isSoldOut ? 'bg-danger' : 'bg-success'} px-3 py-2">${ev.tickets_sold} / ${ev.total_tickets} vé</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-danger px-3" onclick="bookTicket(${ev.id})" ${isSoldOut ? 'disabled' : ''}>
-                                <i class="fa-solid fa-ticket me-1"></i> ${isSoldOut ? 'Hết vé' : 'Đăng Ký'}
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch (err) {
-                console.error("Lỗi tải sự kiện:", err);
-            }
-        }
-
-        document.getElementById('addEventForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const data = {
-                name: document.getElementById('eventName').value,
-                date: document.getElementById('eventDate').value,
-                total_tickets: parseInt(document.getElementById('eventTickets').value)
-            };
-            
-            try {
-                const res = await fetch('/api/events', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+                ev.sold = newSold;
                 
-                if(res.ok) {
-                    alert("Thêm sự kiện thành công!");
-                    e.target.reset();
-                    loadEvents();
-                } else {
-                    const errData = await res.json();
-                    alert("Lỗi: " + (errData.error || "Không thể thêm sự kiện"));
-                }
-            } catch (err) {
-                alert("Lỗi kết nối đến server!");
-            }
-        });
+                saveToStorage();
 
-        async function bookTicket(id) {
-            try {
-                const res = await fetch(`/api/events/${id}/book`, { method: 'POST' });
-                const result = await res.json();
-                if(res.ok) {
-                    alert("Đăng ký vé thành công!");
-                    loadEvents();
-                } else {
-                    alert(result.error || "Không thể đăng ký vé");
-                }
-            } catch (err) {
-                alert("Lỗi kết nối khi đặt vé!");
+                var modal = bootstrap.Modal.getInstance(document.getElementById('editEventModal'));
+                modal.hide();
+                filterEvents();
+                
+                setTimeout(() => alert("Đã cập nhật thông tin sự kiện thành công!"), 300);
             }
         }
 
-        loadEvents();
+        function deleteEvent(id) {
+            if(confirm("Bạn có chắc chắn muốn xóa sự kiện này không?")) {
+                events = events.filter(item => item.id !== id);
+                saveToStorage();
+                filterEvents();
+                setTimeout(() => alert("Đã xóa thành công!"), 300);
+            }
+        }
+
+        function createEvent(event) {
+            event.preventDefault();
+            let title = document.getElementById('newTitle').value;
+            let date = document.getElementById('newDate').value;
+            let total = parseInt(document.getElementById('newTotal').value);
+            
+            let newId = events.length > 0 ? Math.max(...events.map(e => e.id)) + 1 : 1;
+
+            events.push({
+                id: newId,
+                name: title,
+                date: date,
+                total: total,
+                sold: 0
+            });
+            
+            saveToStorage();
+            filterEvents();
+
+            var modal = bootstrap.Modal.getInstance(document.getElementById('createEventModal'));
+            modal.hide();
+            document.getElementById('eventForm').reset();
+            setTimeout(() => alert("Thêm sự kiện mới thành công!"), 300);
+        }
+
+        updateDashboard();
+        renderTable(events);
     </script>
 </body>
 </html>
